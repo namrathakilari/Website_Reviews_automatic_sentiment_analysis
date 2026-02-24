@@ -394,6 +394,7 @@
 
     try {
       // ── CALL YOUR FLASK API ──
+
       const response = await fetch('https://jewelry-reviews-sentiment-analysis.onrender.com/predict', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

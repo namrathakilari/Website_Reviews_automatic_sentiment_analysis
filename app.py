@@ -7,9 +7,8 @@ nltk.download('stopwords', quiet=True)
 from nltk.corpus import stopwords
 
 app = Flask(__name__)
-CORS(app)  # allows your website to talk to this server
+CORS(app)
 
-# Load your trained model
 with open('sentiment_model.pkl', 'rb') as f:
     model = pickle.load(f)
 
