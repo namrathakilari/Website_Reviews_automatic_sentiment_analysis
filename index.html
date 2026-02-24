@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aurène — Handmade Jewelry</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --cream: #f5f0e8;
+    --warm-white: #faf7f2;
+    --terracotta: #c0785a;
+    --terra-light: #e8c4b0;
+    --charcoal: #2c2420;
+    --muted: #8a7a72;
+    --gold: #c9a84c;
+    --positive: #4a7c5f;
+    --negative: #9a4a4a;
+    --neutral: #6a6a7a;
+    --border: rgba(192,120,90,0.2);
+  }
+
+  body { font-family: 'Jost', sans-serif; background: var(--warm-white); color: var(--charcoal); min-height: 100vh; overflow-x: hidden; }
+
+  /* HEADER */
+  header {
+    background: var(--charcoal); color: var(--cream);
+    padding: 0 5vw; display: flex; align-items: center; justify-content: space-between;
+    height: 68px; position: sticky; top: 0; z-index: 100;
+  }
+  .logo { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; font-weight: 300; letter-spacing: 0.12em; color: var(--terra-light); }
+  .logo em { color: var(--gold); font-style: italic; }
+  nav { display: flex; gap: 2rem; font-size: 0.75rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.6; }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, var(--charcoal) 0%, #3d2e28 100%);
+    color: var(--cream); padding: 72px 5vw 60px; position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 75% 50%, rgba(192,120,90,0.2) 0%, transparent 60%);
+  }
+  .hero-tag { font-size: 0.7rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--gold); margin-bottom: 1rem; font-weight: 500; position: relative; }
+  .hero h1 { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.6rem, 5.5vw, 4.5rem); font-weight: 300; line-height: 1.1; margin-bottom: 1rem; max-width: 580px; position: relative; }
+  .hero h1 em { color: var(--terra-light); font-style: italic; }
+  .hero p { max-width: 440px; font-size: 0.92rem; line-height: 1.8; opacity: 0.65; font-weight: 300; position: relative; }
+
+  /* SECTION */
+  .section-header { padding: 52px 5vw 28px; display: flex; align-items: baseline; gap: 1.4rem; }
+  .section-header h2 { font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 400; }
+  .section-header span { font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
+
+  /* PRODUCT GRID */
+  .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 2px; padding: 0 5vw 80px; }
+  .product-card {
+    background: var(--cream); cursor: pointer; overflow: hidden; border: 1px solid var(--border);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .product-card:hover { transform: translateY(-5px); box-shadow: 0 20px 50px rgba(44,36,32,0.13); z-index: 2; position: relative; }
+  .product-img { width: 100%; aspect-ratio: 4/5; display: flex; align-items: center; justify-content: center; font-size: 5rem; }
+  .p1 { background: linear-gradient(145deg, #f0e6d8, #e8d5c0); }
+  .p2 { background: linear-gradient(145deg, #dde8e0, #c8ddd2); }
+  .p3 { background: linear-gradient(145deg, #e8ddf0, #d4c8e0); }
+  .p4 { background: linear-gradient(145deg, #f0e8d0, #e0d4b8); }
+  .product-info { padding: 18px 20px 22px; }
+  .product-info h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-weight: 400; margin-bottom: 3px; }
+  .product-info .material { font-size: 0.72rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
+  .product-info .price { color: var(--terracotta); font-size: 0.88rem; font-weight: 500; }
+  .view-btn {
+    display: inline-block; margin-top: 14px; padding: 7px 18px;
+    border: 1px solid var(--terracotta); color: var(--terracotta);
+    font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase;
+    transition: all 0.25s; background: transparent; cursor: pointer;
+  }
+  .product-card:hover .view-btn { background: var(--terracotta); color: white; }
+
+  /* OVERLAY */
+  .overlay { display: none; position: fixed; inset: 0; z-index: 200; background: rgba(44,36,32,0.55); backdrop-filter: blur(5px); }
+  .overlay.active { display: flex; align-items: flex-start; justify-content: center; overflow-y: auto; padding: 40px 20px; }
+
+  /* PANEL */
+  .panel { background: var(--warm-white); width: 100%; max-width: 860px; animation: slideUp 0.35s ease; position: relative; margin: auto; }
+  @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+  .panel-top { display: grid; grid-template-columns: 1fr 1fr; }
+  .panel-img { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 7rem; }
+  .panel-info { padding: 44px 36px; display: flex; flex-direction: column; justify-content: center; }
+  .panel-info .tag { font-size: 0.68rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
+  .panel-info h2 { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; font-weight: 400; line-height: 1.2; margin-bottom: 8px; }
+  .panel-info .material-tag { font-size: 0.72rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 16px; }
+  .panel-info .price-big { font-size: 1.5rem; color: var(--terracotta); font-weight: 300; margin-bottom: 16px; font-family: 'Cormorant Garamond', serif; }
+  .panel-info p { font-size: 0.88rem; line-height: 1.8; color: var(--muted); margin-bottom: 24px; }
+  .close-btn { position: absolute; top: 16px; right: 20px; background: none; border: none; cursor: pointer; font-size: 1.5rem; color: var(--muted); transition: color 0.2s; }
+  .close-btn:hover { color: var(--charcoal); }
+
+  /* SENTIMENT SUMMARY */
+  .sentiment-summary {
+    display: flex; gap: 12px; padding: 20px 36px;
+    background: var(--cream); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    flex-wrap: wrap; align-items: center;
+  }
+  .sentiment-summary .label { font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); margin-right: 4px; width: 100%; margin-bottom: 4px; }
+  .s-pill {
+    display: flex; align-items: center; gap: 7px; padding: 7px 16px;
+    font-size: 0.8rem; font-weight: 500; letter-spacing: 0.06em; border: 1.5px solid;
+    transition: all 0.3s;
+  }
+  .s-pill.pos { border-color: var(--positive); color: var(--positive); background: rgba(74,124,95,0.07); }
+  .s-pill.neg { border-color: var(--negative); color: var(--negative); background: rgba(154,74,74,0.07); }
+  .s-pill.neu { border-color: var(--neutral); color: var(--neutral); background: rgba(106,106,122,0.07); }
+  .s-pill .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .s-pill.pos .dot { background: var(--positive); }
+  .s-pill.neg .dot { background: var(--negative); }
+  .s-pill.neu .dot { background: var(--neutral); }
+  .s-pill .count { font-size: 1rem; font-weight: 600; }
+
+  /* REVIEWS SECTION */
+  .reviews-section { padding: 28px 36px 36px; }
+  .reviews-section h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 400; margin-bottom: 20px; }
+
+  /* REVIEW FORM */
+  .review-form { margin-bottom: 28px; display: flex; flex-direction: column; gap: 10px; }
+  .review-form input {
+    padding: 10px 14px; border: 1px solid var(--border); background: var(--cream);
+    font-family: 'Jost', sans-serif; font-size: 0.85rem; color: var(--charcoal);
+    outline: none; transition: border-color 0.2s;
+  }
+  .review-form input:focus { border-color: var(--terracotta); }
+  .review-form textarea {
+    padding: 12px 14px; border: 1px solid var(--border); background: var(--cream);
+    font-family: 'Jost', sans-serif; font-size: 0.85rem; color: var(--charcoal);
+    resize: vertical; min-height: 90px; outline: none; transition: border-color 0.2s;
+  }
+  .review-form textarea:focus { border-color: var(--terracotta); }
+  .submit-btn {
+    align-self: flex-start; padding: 10px 28px;
+    background: var(--charcoal); color: var(--cream);
+    border: none; cursor: pointer; font-family: 'Jost', sans-serif;
+    font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase;
+    transition: background 0.25s;
+  }
+  .submit-btn:hover { background: var(--terracotta); }
+  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* REVIEW LIST */
+  .review-list { display: flex; flex-direction: column; gap: 14px; max-height: 380px; overflow-y: auto; padding-right: 4px; }
+  .review-list::-webkit-scrollbar { width: 4px; }
+  .review-list::-webkit-scrollbar-track { background: var(--cream); }
+  .review-list::-webkit-scrollbar-thumb { background: var(--terra-light); }
+
+  .review-item { background: var(--cream); padding: 16px 18px; border-left: 3px solid; position: relative; }
+  .review-item.positive { border-color: var(--positive); }
+  .review-item.negative { border-color: var(--negative); }
+  .review-item.neutral { border-color: var(--neutral); }
+
+  .review-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .reviewer-name { font-size: 0.82rem; font-weight: 500; }
+  .sentiment-badge {
+    font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 3px 8px; font-weight: 500;
+  }
+  .sentiment-badge.positive { background: rgba(74,124,95,0.12); color: var(--positive); }
+  .sentiment-badge.negative { background: rgba(154,74,74,0.12); color: var(--negative); }
+  .sentiment-badge.neutral { background: rgba(106,106,122,0.12); color: var(--neutral); }
+  .review-text { font-size: 0.85rem; line-height: 1.7; color: var(--charcoal); margin-bottom: 4px; }
+  .review-confidence { font-size: 0.7rem; color: var(--muted); }
+
+  /* ANALYZING STATE */
+  .analyzing { font-size: 0.8rem; color: var(--muted); font-style: italic; padding: 10px 0; display: none; }
+
+  @media (max-width: 600px) {
+    .panel-top { grid-template-columns: 1fr; }
+    .panel-img { aspect-ratio: 3/2; font-size: 4rem; }
+    .panel-info { padding: 24px 20px; }
+    .sentiment-summary { padding: 16px 20px; }
+    .reviews-section { padding: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">Aur<em>è</em>ne</div>
+  <nav>
+    <span>Collections</span>
+    <span>About</span>
+    <span>Contact</span>
+  </nav>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">Handcrafted with love</div>
+  <h1>Jewelry made<br>to be <em>remembered</em></h1>
+  <p>Each piece is crafted by hand using ethically sourced materials. Designed for the moments that matter most.</p>
+</div>
+
+<!-- PRODUCT GRID -->
+<div class="section-header">
+  <h2>Our Collection</h2>
+  <span>Click a piece to explore</span>
+</div>
+
+<div class="product-grid" id="productGrid"></div>
+
+<!-- PRODUCT OVERLAY -->
+<div class="overlay" id="overlay">
+  <div class="panel" id="panel">
+    <button class="close-btn" onclick="closePanel()">✕</button>
+
+    <div class="panel-top">
+      <div class="panel-img" id="panelImg"></div>
+      <div class="panel-info">
+        <div class="tag">Handcrafted Collection</div>
+        <h2 id="panelName"></h2>
+        <div class="material-tag" id="panelMaterial"></div>
+        <div class="price-big" id="panelPrice"></div>
+        <p id="panelDesc"></p>
+      </div>
+    </div>
+
+    <!-- SENTIMENT SUMMARY -->
+    <div class="sentiment-summary">
+      <div class="label">Customer Sentiment</div>
+      <div class="s-pill pos">
+        <div class="dot"></div>
+        <span>Positive</span>
+        <span class="count" id="posCount">0</span>
+      </div>
+      <div class="s-pill neg">
+        <div class="dot"></div>
+        <span>Negative</span>
+        <span class="count" id="negCount">0</span>
+      </div>
+      <div class="s-pill neu">
+        <div class="dot"></div>
+        <span>Neutral</span>
+        <span class="count" id="neuCount">0</span>
+      </div>
+    </div>
+
+    <!-- REVIEWS -->
+    <div class="reviews-section">
+      <h3>Customer Reviews</h3>
+
+      <div class="review-form">
+        <input type="text" id="reviewerName" placeholder="Your name" maxlength="40" />
+        <textarea id="reviewText" placeholder="Write your review here..."></textarea>
+        <div class="analyzing" id="analyzingMsg">✦ Analyzing sentiment...</div>
+        <button class="submit-btn" id="submitBtn" onclick="submitReview()">Post Review</button>
+      </div>
+
+      <div class="review-list" id="reviewList"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── PRODUCT DATA ──
+  const products = [
+    {
+      id: 1,
+      name: "Luna Crescent Necklace",
+      material: "Sterling Silver · Moonstone",
+      price: "₹5,699",
+      emoji: "🌙",
+      bg: "p1",
+      desc: "A delicate crescent moon pendant set with a genuine moonstone. Hand-formed sterling silver chain. Perfect for everyday wear or gifting.",
+      reviews: []
+    },
+    {
+      id: 2,
+      name: "Forest Leaf Earrings",
+      material: "Gold-filled · Emerald",
+      price: "₹4,499",
+      emoji: "🌿",
+      bg: "p2",
+      desc: "Inspired by early morning walks through the forest. Each leaf is individually shaped and set with a tiny emerald chip.",
+      reviews: []
+    },
+    {
+      id: 3,
+      name: "Violet Bloom Ring",
+      material: "Sterling Silver · Amethyst",
+      price: "₹5,999",
+      emoji: "💜",
+      bg: "p3",
+      desc: "A sculptural floral ring set with a raw amethyst stone. Adjustable band fits most sizes. Each one is uniquely one of a kind.",
+      reviews: []
+    },
+    {
+      id: 4,
+      name: "Golden Sun Bracelet",
+      material: "14k Gold-filled · Citrine",
+      price: "₹7,199",
+      emoji: "☀️",
+      bg: "p4",
+      desc: "A warm, sun-inspired bracelet with hand-wrapped citrine stones. Lobster clasp closure. Radiates positive energy.",
+      reviews: []
+    }
+  ];
+
+  let currentProductId = null;
+
+  // ── RENDER PRODUCT GRID ──
+  function renderGrid() {
+    const grid = document.getElementById('productGrid');
+    grid.innerHTML = products.map(p => `
+      <div class="product-card" onclick="openPanel(${p.id})">
+        <div class="product-img ${p.bg}">${p.emoji}</div>
+        <div class="product-info">
+          <h3>${p.name}</h3>
+          <div class="material">${p.material}</div>
+          <div class="price">${p.price}</div>
+          <button class="view-btn">View Product</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // ── OPEN PRODUCT PANEL ──
+  function openPanel(id) {
+    const p = products.find(x => x.id === id);
+    currentProductId = id;
+
+    document.getElementById('panelImg').className = `panel-img ${p.bg}`;
+    document.getElementById('panelImg').textContent = p.emoji;
+    document.getElementById('panelName').textContent = p.name;
+    document.getElementById('panelMaterial').textContent = p.material;
+    document.getElementById('panelPrice').textContent = p.price;
+    document.getElementById('panelDesc').textContent = p.desc;
+
+    renderReviews(p);
+
+    document.getElementById('overlay').classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  // ── CLOSE PANEL ──
+  function closePanel() {
+    document.getElementById('overlay').classList.remove('active');
+    document.body.style.overflow = '';
+    currentProductId = null;
+  }
+
+  // Close when clicking outside panel
+  document.getElementById('overlay').addEventListener('click', function(e) {
+    if (e.target === this) closePanel();
+  });
+
+  // ── RENDER REVIEWS + SENTIMENT COUNTS ──
+  function renderReviews(product) {
+    const counts = { positive: 0, negative: 0, neutral: 0 };
+    product.reviews.forEach(r => counts[r.sentiment]++);
+
+    document.getElementById('posCount').textContent = counts.positive;
+    document.getElementById('negCount').textContent = counts.negative;
+    document.getElementById('neuCount').textContent = counts.neutral;
+
+    const list = document.getElementById('reviewList');
+    if (product.reviews.length === 0) {
+      list.innerHTML = `<p style="font-size:0.85rem; color:var(--muted); font-style:italic;">No reviews yet. Be the first to share your thoughts!</p>`;
+      return;
+    }
+
+    list.innerHTML = product.reviews.slice().reverse().map(r => `
+      <div class="review-item ${r.sentiment}">
+        <div class="review-header">
+          <span class="reviewer-name">${r.name}</span>
+          <span class="sentiment-badge ${r.sentiment}">${r.sentiment}</span>
+        </div>
+        <div class="review-text">${r.text}</div>
+        <div class="review-confidence">${r.confidence}% confidence</div>
+      </div>
+    `).join('');
+  }
+
+  // ── SUBMIT REVIEW ──
+  async function submitReview() {
+    const name = document.getElementById('reviewerName').value.trim();
+    const text = document.getElementById('reviewText').value.trim();
+
+    if (!name) { alert('Please enter your name.'); return; }
+    if (!text) { alert('Please write a review.'); return; }
+
+    const btn = document.getElementById('submitBtn');
+    const analyzing = document.getElementById('analyzingMsg');
+
+    btn.disabled = true;
+    analyzing.style.display = 'block';
+
+    try {
+      // ── CALL YOUR FLASK API ──
+      const response = await fetch('https://jewelry-reviews-sentiment-analysis.onrender.com/predict', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ review: text })
+      });
+
+      if (!response.ok) throw new Error('API error');
+
+      const result = await response.json();
+
+      const product = products.find(p => p.id === currentProductId);
+      product.reviews.push({
+        name: name,
+        text: text,
+        sentiment: result.sentiment,
+        confidence: result.confidence
+      });
+
+      document.getElementById('reviewerName').value = '';
+      document.getElementById('reviewText').value = '';
+      renderReviews(product);
+
+    } catch (err) {
+      alert('Could not connect to the sentiment model. Make sure your Flask server is running on port 5000!');
+      console.error(err);
+    }
+
+    btn.disabled = false;
+    analyzing.style.display = 'none';
+  }
+
+  // ── INIT ──
+  renderGrid();
+</script>
+</body>
+</html>
